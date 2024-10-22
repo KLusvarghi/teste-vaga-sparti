@@ -14,19 +14,19 @@ export const Nav = () => {
       />
       <ul className="flex flex-col gap-2 mt-24">
         <li>
-          <LinkLi href="/get-product">Obter produto</LinkLi>
+          <LinkLi href="/product-controller/get-product">Obter produto</LinkLi>
         </li>
         <li>
-          <LinkLi href="/update-product">Atualizar produto</LinkLi>
+          <LinkLi href="/product-controller/update-product">Atualizar produto</LinkLi>
         </li>
         <li>
-          <LinkLi href="/get-product-list">Obter lista de produtos</LinkLi>
+          <LinkLi href="/product-controller/get-product-list">Obter lista de produtos</LinkLi>
         </li>
         <li>
-          <LinkLi href="/create-new-product">Criar novo produto</LinkLi>
+          <LinkLi href="/product-controller/create-new-product">Criar novo produto</LinkLi>
         </li>
         <li>
-          <LinkLi href="/get-list-of-products-page">
+          <LinkLi href="/product-controller/get-list-of-products-page">
             Obter uma lista de página de produtos
           </LinkLi>
         </li>
