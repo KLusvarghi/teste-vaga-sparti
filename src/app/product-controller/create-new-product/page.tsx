@@ -91,7 +91,7 @@ const CreateNewProductPage = () => {
       <Box>
         <form
           onSubmit={hadleSubmit}
-          className="w-full px-24 flex flex-col gap-2 "
+          className="w-full px-24 flex flex-col gap-2 items-center"
         >
           <Input
             label="Insira o nome"
@@ -99,12 +99,12 @@ const CreateNewProductPage = () => {
             name="getProduct"
             {...name}
           />
-          <Checkbox
+          {/* <Checkbox
             description="Insira a Unidade de Medida"
             name="getProduct"
             options={unitMeasurementOptions}
             {...unitMeasurement}
-          />
+          /> */}
           <Input
             label="Insira a quantia"
             type="text"
@@ -135,12 +135,12 @@ const CreateNewProductPage = () => {
             name="getProduct"
             {...dateManufacture}
           />
-          <div className="flex gap-4 w-full">
+          <div className="flex w-full justify-center">
             {loading ? (
               <Button loading={loading}>Cadastrando produto...</Button>
             ) : (
               <>
-                <Button>Cadastrar produto</Button>
+                <Button className='w-1/2'>Cadastrar produto</Button>
               </>
             )}
           </div>

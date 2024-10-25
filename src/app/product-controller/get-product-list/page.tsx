@@ -44,7 +44,7 @@ const GetProductList = () => {
               </Button>
             )}
           </form>
-          {succesRequest && <Button onClick={toggleList}>Omitir Lista</Button>}
+          {succesRequest && <Button className="w-1/3" onClick={toggleList}>Omitir Lista</Button>}
           <Error error={error} />
         </div>
       </Box>
