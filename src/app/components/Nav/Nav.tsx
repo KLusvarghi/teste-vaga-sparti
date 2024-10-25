@@ -2,26 +2,15 @@
 import React from 'react';
 import Image from 'next/image';
 import LinkLi from '../Link/Link';
-import { useNavContext } from '@/app/context/NavContext';
-import { Bars3Icon } from '@heroicons/react/24/solid';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/solid';
 import { NumberedListIcon } from '@heroicons/react/24/solid';
 import { QueueListIcon } from '@heroicons/react/24/solid';
 import { Square3Stack3DIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon } from '@heroicons/react/24/solid';
-import classNames from 'classnames';
 
 export const Nav = () => {
-  const { active, setActive } = useNavContext();
-
-  const iconClassName = classNames(
-    'h-6 w-6 text-gray-500 cursor-pointer hover:fill-[#354C76]',
-    {
-      ['fill-[#354C76]']: !active,
-    },
-  );
-  // const iconClassName =
-  //   'h-6 w-6 text-gray-500 cursor-pointer hover:fill-[#354C76]';
+  const iconClassName =
+    'h-6 w-6 text-gray-500 cursor-pointer hover:fill-primary';
 
   const iconProps = {
     height: 26,
@@ -30,24 +19,7 @@ export const Nav = () => {
   };
 
   return (
-    <nav
-      className={classNames(
-        'flex flex-col h-screen bg-nav p-3 w-60 overflow-hidden',
-        {
-          ['w-60']: active,
-          ['w-24']: !active,
-        },
-      )}
-    >
-      <Bars3Icon
-        onClick={() => setActive(!active)}
-        className={classNames(
-          'transition ease-in-out delay-150 h-8 w-8 text-gray-500 mb-6 hover:scale-110 cursor-pointer select-none',
-          {
-            ['mx-auto']: !active,
-          },
-        )}
-      />
+    <nav className={'flex flex-col bg-nav p-3 w-60 overflow-hidden'}>
       <Image
         src="/logo.svg"
         alt="Logo"
@@ -55,12 +27,8 @@ export const Nav = () => {
         height={200}
         className="mx-auto"
       />
-      <ul
-        className={classNames('flex flex-col gap-2 mt-24', {
-          ['gap-6']: !active,
-        })}
-      >
-        <li>
+      <ul className={'flex flex-col gap-2 mt-24'}>
+        <li onClick={(e) => e.target}>
           <LinkLi
             href="/product-controller/get-product"
             icon={<ClipboardDocumentListIcon {...iconProps} />}
