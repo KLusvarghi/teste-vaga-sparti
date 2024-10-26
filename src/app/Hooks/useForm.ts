@@ -11,21 +11,17 @@ export const types = {
   },
   number: {
     regex: /^\d+$/,
-    message: 'Apenas números são válidos',
+    message: 'Apenas números e números positivos são válidos',
   },
   price: {
     regex: /^(?:\d{1,3}(?:,\d{3})*|\d+|\d)(?:\.\d{2})?$/,
     message: 'Valor monetário inválido',
   },
   date: {
-    regex: /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/,
+    regex: /^(19[8-9]\d|20\d{2})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
     message: 'Data inváldia',
   },
 };
-// os que não tem regex:
-// unitMeasurement
-// perishable
-//  o date tem que validar se é uma data maior que a atual
 
 interface IFormProps {
   type?: keyof typeof types;
@@ -37,10 +33,10 @@ const useForm = (type?: IFormProps['type']) => {
   const [value, setValue] = useState<string>('');
   const [error, setError] = useState<null | string>(null);
 
-  function validate(value: string | number) {
+  function validate(value: string | number | boolean) {
     const inputValue = value.toString();
-
     if (type) {
+      
       if (inputValue.length === 0) {
         setError('Preencha um valor');
         return null;
@@ -52,13 +48,14 @@ const useForm = (type?: IFormProps['type']) => {
         return true;
       }
     }
-
+    return true;
   }
 
   function onChange(event: InputChangeEvent) {
     const { target } = event;
     if (error) validate(target.value);
     setValue(target.value);
+    // console.log(target.value);
   }
 
   return {

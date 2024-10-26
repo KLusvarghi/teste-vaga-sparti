@@ -50,6 +50,7 @@ const useFetch = () => {
     error,
     setError,
     loading,
+    setLoading,
     request,
     setStorage,
     removeStorage,

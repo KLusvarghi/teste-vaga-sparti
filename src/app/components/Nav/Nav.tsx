@@ -1,12 +1,13 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
 import LinkLi from '../Link/Link';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/solid';
 import { NumberedListIcon } from '@heroicons/react/24/solid';
 import { QueueListIcon } from '@heroicons/react/24/solid';
 import { Square3Stack3DIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon } from '@heroicons/react/24/solid';
+import Image from 'next/image';
+// import Logo from '../Logo/Logo';
 
 export const Nav = () => {
   const iconClassName =
@@ -20,13 +21,12 @@ export const Nav = () => {
 
   return (
     <nav className={'flex flex-col bg-nav p-3 w-60 overflow-hidden'}>
-      <Image
-        src="/logo.svg"
-        alt="Logo"
-        width={200}
-        height={200}
-        className="mx-auto"
-      />
+      {/* <Logo
+       width={250}
+       height={250}
+       className="mx-auto"
+      /> */}
+      <Image src="./logo.svg" alt="logo" height={20} width={20} />
       <ul className={'flex flex-col gap-2 mt-24'}>
         <li onClick={(e) => e.target}>
           <LinkLi

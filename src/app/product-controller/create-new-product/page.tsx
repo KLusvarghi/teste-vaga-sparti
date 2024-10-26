@@ -7,82 +7,119 @@ import Box from '@/app/components/Box/Box';
 import Button from '@/app/components/Button/Button';
 import Input from '@/app/components/Input/Input';
 import Error from '@/app/components/Error/Error';
+import { IIensProps } from '@/app/components/Input/Radio';
+import Switch from '@/app/components/Input/Switch';
+import Radio from '@/app/components/Input/Radio';
+import dateValidate from '@/app/utils/dateValidate';
 import { CREATE_NEW_PRODUCT } from '@/app/api';
-import Checkbox, { IIensProps } from '@/app/components/Input/Checkbox';
+import { IValidateProps } from '@/app/types/props';
+
+export const unitMeasurementOptions: IIensProps[] = [
+  {
+    id: 'KG',
+    label: 'kg',
+  },
+  {
+    id: 'UN',
+    label: 'un',
+  },
+  {
+    id: 'LT',
+    label: 'lt',
+  },
+];
 
 const CreateNewProductPage = () => {
   const name = useForm('name');
-  const unitMeasurement = useForm(); //validação diferente, terar que ter um checkbox e depois insrir o valor
+  const unitMeasurement = useForm();
   const amount = useForm('number');
   const price = useForm('price');
-  const perishable = useForm(); //validação com switch
   const expirationDate = useForm('date');
   const dateManufacture = useForm('date');
 
   const { loading, error, request, setError } = useFetch();
   const [succesRequest, setSuccesRequest] = useState<boolean>(false);
+  const [isPerishable, setIsPerishable] = useState<boolean>(false);
+  const [isValidate, setIsValidate] = useState(); // ---------------------------ARRUAMR O TIPO DE DADO RECEBIDO
+  const [dontContinue, setDontContine] = useState<boolean>(false);
 
-  const unitMeasurementOptions: IIensProps[] = [
-    {
-      id: 'KG',
-      label: 'kg',
-    },
-    {
-      id: 'UN',
-      label: 'un',
-    },
-    {
-      id: 'LT',
-      label: 'lt',
-    },
-  ]; 
+  const registerNewProduct = () => {
+    setSuccesRequest(false);
+    name.setValue('');
+    unitMeasurement.setValue('');
+    amount.setValue('');
+    price.setValue('');
+    setIsPerishable(false);
+    expirationDate.setValue('');
+    dateManufacture.setValue('');
+  };
 
   async function hadleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    setDontContine(false);
 
-    const body = {
-      name: name.value,
-      unitMeasurement: unitMeasurement.value,
-      amount: amount.value,
-      price: price.value,
-      perishable: perishable.value,
-      expirationDate: expirationDate.value,
-      dateManufacture: dateManufacture.value,
-    };
-    console.log(body);
-
-    if (
-      name.value ||
-      unitMeasurement.value ||
-      amount.value ||
-      price.value ||
-      perishable.value ||
-      expirationDate.value ||
-      dateManufacture.value === ''
-    ) {
-      return setError('Preencha todos os campos com valores válidos!');
-    } else {
-      setError(null);
-      if (
-        !name.error &&
-        !unitMeasurement.error &&
-        !amount.error &&
-        !price.error &&
-        !perishable.error &&
-        !expirationDate.error &&
-        !dateManufacture.error
-      ) {
-        const { url, options } = CREATE_NEW_PRODUCT(body);
-        const { response } = await request(url, options);
-
-        if (response?.status === 200) {
-          setSuccesRequest(true);
+    // só fará a validação se o porudto for perecivel isPerecible (true)
+    if (isPerishable && expirationDate.value && dateManufacture.value) {
+      const validate = dateValidate(
+        expirationDate.value,
+        dateManufacture.value,
+      );
+      setIsValidate(validate);
+      if (validate.isContinue) {
+        if (validate.message) {
+          setError(validate.message);
         } else {
-          setSuccesRequest(false);
-          setError('Dados inválidos');
+          // prossegue o código e faz as outras validações
+          if (
+            name.value == '' ||
+            unitMeasurement.value == '' ||
+            amount.value == '' ||
+            price.value == ''
+          ) {
+            return setError('Preencha todos os campos com valores válidos!');
+          } else {
+            setError(null);
+            if (
+              !name.error &&
+              !unitMeasurement.error &&
+              !amount.error &&
+              !price.error &&
+              !expirationDate.error &&
+              !dateManufacture.error
+            ) {
+              console.log('Data de validade ', expirationDate.value);
+              const body = {
+                name: name.value,
+                unitMeasurement: unitMeasurement.value,
+                amount: +amount.value,
+                price: price.value,
+                perishable: isPerishable,
+                expirationDate: expirationDate.value,
+                dateManufacture: dateManufacture.value,
+              };
+
+              // ------------------------------- arrumar o valor recebido na API
+              const { url, options } = CREATE_NEW_PRODUCT(body);
+              const { response } = await request(url, options);
+              console.log(response);
+
+              // dateValidate(expirationDate.value, dateManufacture.value);
+
+              if (response?.status === 200) {
+                setSuccesRequest(true);
+              } else {
+                setSuccesRequest(false);
+                setError('Dados inválidos');
+              }
+            }
+          }
         }
+      } else {
+        setDontContine(true);
       }
+    } else {
+      return setError('Preencha todos os campos com valores válidos!');
     }
   }
 
@@ -91,61 +128,66 @@ const CreateNewProductPage = () => {
       <Box>
         <form
           onSubmit={hadleSubmit}
-          className="w-full px-24 flex flex-col gap-2 items-center"
+          className="w-full 2xl:w-2/3 px-2 md:px-16 lg:px-28 flex flex-col gap-2"
         >
-          <Input
-            label="Insira o nome"
-            type="text"
-            name="getProduct"
-            {...name}
-          />
-          {/* <Checkbox
+          <Input label="Insira o nome" type="text" name="name" {...name} />
+          <Radio
             description="Insira a Unidade de Medida"
-            name="getProduct"
+            name="radio"
             options={unitMeasurementOptions}
             {...unitMeasurement}
-          /> */}
+          />
           <Input
             label="Insira a quantia"
-            type="text"
-            name="getProduct"
+            type="number"
+            name="amout"
             {...amount}
           />
-          <Input
-            label="Insira a preço"
-            type="text"
-            name="getProduct"
-            {...price}
-          />
-          <Input
-            label="É Perecível?"
-            type="text"
-            name="getProduct"
-            {...perishable}
+          <Input label="Insira o preço" type="text" name="price" {...price} />
+          <Switch
+            description="É perecível?"
+            offColor={'#EB0000'}
+            onColor={'#00EB08'}
+            handleDiameter={30}
+            height={25}
+            width={60}
+            checked={isPerishable}
+            setIsPerishable={setIsPerishable}
+            value={isPerishable}
           />
           <Input
             label="Insira a data de validade"
-            type="text"
-            name="getProduct"
+            type="date"
+            name="expirationDate"
             {...expirationDate}
           />
           <Input
             label="Insira a data de fabricação"
-            type="text"
-            name="getProduct"
+            type="date"
+            name="dateManufacture"
             {...dateManufacture}
           />
-          <div className="flex w-full justify-center">
+          <div className="flex flex-col w-full items-center">
             {loading ? (
               <Button loading={loading}>Cadastrando produto...</Button>
             ) : (
               <>
-                <Button className='w-1/2'>Cadastrar produto</Button>
+                <Button className="w-1/2">Cadastrar produto</Button>
               </>
             )}
+            <Error className="mt-2" error={error} />
+            {dontContinue &&
+              isValidate &&
+              isValidate.message.map((message) => {
+                <Error className="mt-2" error={message} />;
+              })}
           </div>
-          <Error error={error} />
         </form>
+        {succesRequest && (
+          <Button onClick={registerNewProduct} className="w-1/2">
+            Cadastrar um novo produto
+          </Button>
+        )}
       </Box>
     </Container>
   );

@@ -21,7 +21,7 @@ const Input = ({
   error,
 }: IInputProps) => {
   return (
-    <div className="flex flex-col gap-1 w-full 2xl:w-1/2 ">
+    <div className="flex flex-col gap-1 w-full self-center">
       <label htmlFor={name} className="text-gray-800 text-lg">{label}</label>
       <input
         type={type}

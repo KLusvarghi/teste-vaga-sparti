@@ -15,3 +15,7 @@ export interface IProductProps {
   unitMeasurement: string;
 }
 
+export interface IValidateProps {
+  message: (string | undefined)[];
+  isContinue: boolean;
+}

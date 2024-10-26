@@ -27,7 +27,7 @@ const GetProduct = () => {
   const [productId, setProductId] = useState<string>('');
   const [data, setData] = useState<IProductProps | null>(null);
   const [hasFetched, setHasFetched] = useState<boolean>(false);
-  let key = 'idProduct';
+  const key = 'idProduct';
 
   const hadleSubmit = useCallback(
     async (e?: React.FormEvent<HTMLFormElement>) => {
@@ -67,6 +67,7 @@ const GetProduct = () => {
       removeStorage,
       getStorage,
       setError,
+      key,
     ],
   );
 
@@ -74,7 +75,7 @@ const GetProduct = () => {
     const id = getStorage(key);
     if (!hasFetched && id) {
       if (types.id.regex.test(id)) {
-        idProduct.setValue(id)
+        idProduct.setValue(id);
         const fetchStoredProduct = async () => {
           const { url, options } = GET_PRODUCT(id);
           const { response } = await request(url, options);
@@ -95,14 +96,14 @@ const GetProduct = () => {
         removeStorage(key);
       }
     }
-  }, [getStorage, request, hasFetched]);
+  }, [getStorage, request, hasFetched, idProduct, removeStorage]);
 
   return (
     <Container title="Obter produto">
       <Box>
         <form
           onSubmit={hadleSubmit}
-          className="w-full px-24 flex flex-col gap-2 items-center "
+          className="w-full px-24 flex flex-col gap-2 items-center"
         >
           <Input
             label="Insira o identificador do produto"

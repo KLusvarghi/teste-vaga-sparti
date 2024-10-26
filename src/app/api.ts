@@ -34,7 +34,7 @@ export function GET_PRODUCT_LIST() {
   };
 }
 
-export function CREATE_NEW_PRODUCT(body: { [key: string]: string }) {
+export function CREATE_NEW_PRODUCT(body: { key: string | number | boolean }) {
   return {
     url: API_URL,
     options: {
