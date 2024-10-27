@@ -1,3 +1,5 @@
+import { IProductProps } from "./types/props";
+
 export const API_URL = 'https://api-recruitment.sparti.dev/';
 
 export function GET_PRODUCT(id: string) {
@@ -34,7 +36,7 @@ export function GET_PRODUCT_LIST() {
   };
 }
 
-export function CREATE_NEW_PRODUCT(body: { key: string | number | boolean }) {
+export function CREATE_NEW_PRODUCT(body: IProductProps) {
   return {
     url: API_URL,
     options: {

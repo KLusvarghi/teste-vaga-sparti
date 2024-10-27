@@ -16,15 +16,15 @@ import { IValidateProps } from '@/app/types/props';
 
 export const unitMeasurementOptions: IIensProps[] = [
   {
-    id: 'KG',
+    id: 'kg',
     label: 'kg',
   },
   {
-    id: 'UN',
+    id: 'un',
     label: 'un',
   },
   {
-    id: 'LT',
+    id: 'lt',
     label: 'lt',
   },
 ];
@@ -40,8 +40,8 @@ const CreateNewProductPage = () => {
   const { loading, error, request, setError } = useFetch();
   const [succesRequest, setSuccesRequest] = useState<boolean>(false);
   const [isPerishable, setIsPerishable] = useState<boolean>(false);
-  const [isValidate, setIsValidate] = useState(); // ---------------------------ARRUAMR O TIPO DE DADO RECEBIDO
-  const [dontContinue, setDontContine] = useState<boolean>(false);
+  const [isValidate, setIsValidate] = useState<IValidateProps | null>(null);
+  const [isContinue, setIsContinue] = useState<boolean>(false);
 
   const registerNewProduct = () => {
     setSuccesRequest(false);
@@ -57,69 +57,74 @@ const CreateNewProductPage = () => {
   async function hadleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setDontContine(false);
+    setIsContinue(false);
 
-    // só fará a validação se o porudto for perecivel isPerecible (true)
-    if (isPerishable && expirationDate.value && dateManufacture.value) {
+    const formatarData = (data: string): string => {
+      const newDate = data.replaceAll('-', '/');
+      const [ano, mes, dia] = newDate.split('/');
+      return `${dia}/${mes}/${ano}`;
+    };
+
+    async function prosseguirValidacao() {
+      if (
+        name.value == '' ||
+        unitMeasurement.value == '' ||
+        amount.value == '' ||
+        price.value == ''
+      ) {
+        return setError('Preencha todos os campos com valores válidos!');
+      } else {
+        setError(null);
+        if (
+          !name.error &&
+          !unitMeasurement.error &&
+          !amount.error &&
+          !price.error &&
+          !expirationDate.error &&
+          !dateManufacture.error
+        ) {
+          const priceResolve = Number(price.value).toFixed(1);
+          const body = {
+            name: name.value,
+            unitMeasurement: unitMeasurement.value,
+            amount: +amount.value,
+            price: priceResolve.toString(),
+            perishable: isPerishable,
+            expirationDate: formatarData(expirationDate.value),
+            dateManufacture: formatarData(dateManufacture.value),
+          };
+
+          console.log(body);
+
+          const { url, options } = CREATE_NEW_PRODUCT(body);
+          const { response } = await request(url, options);
+          console.log(response);
+          if (response?.status === 200) {
+            console.log('Produto cadastrado com sucesso:', response.data);
+            setSuccesRequest(true);
+          } else {
+            setSuccesRequest(false);
+            setError('Erro no cadastro, dados inválidos');
+          }
+        }
+      }
+    }
+    if (isPerishable) {
       const validate = dateValidate(
         expirationDate.value,
         dateManufacture.value,
       );
       setIsValidate(validate);
       if (validate.isContinue) {
-        if (validate.message) {
-          setError(validate.message);
-        } else {
-          // prossegue o código e faz as outras validações
-          if (
-            name.value == '' ||
-            unitMeasurement.value == '' ||
-            amount.value == '' ||
-            price.value == ''
-          ) {
-            return setError('Preencha todos os campos com valores válidos!');
-          } else {
-            setError(null);
-            if (
-              !name.error &&
-              !unitMeasurement.error &&
-              !amount.error &&
-              !price.error &&
-              !expirationDate.error &&
-              !dateManufacture.error
-            ) {
-              console.log('Data de validade ', expirationDate.value);
-              const body = {
-                name: name.value,
-                unitMeasurement: unitMeasurement.value,
-                amount: +amount.value,
-                price: price.value,
-                perishable: isPerishable,
-                expirationDate: expirationDate.value,
-                dateManufacture: dateManufacture.value,
-              };
-
-              // ------------------------------- arrumar o valor recebido na API
-              const { url, options } = CREATE_NEW_PRODUCT(body);
-              const { response } = await request(url, options);
-              console.log(response);
-
-              // dateValidate(expirationDate.value, dateManufacture.value);
-
-              if (response?.status === 200) {
-                setSuccesRequest(true);
-              } else {
-                setSuccesRequest(false);
-                setError('Dados inválidos');
-              }
-            }
-          }
-        }
+        setIsContinue(true);
+        prosseguirValidacao();
+        if (validate.message) setError(validate.message);
       } else {
-        setDontContine(true);
+        setIsContinue(false);
+        setError(validate.message);
       }
     } else {
-      return setError('Preencha todos os campos com valores válidos!');
+      prosseguirValidacao();
     }
   }
 
@@ -167,7 +172,7 @@ const CreateNewProductPage = () => {
             name="dateManufacture"
             {...dateManufacture}
           />
-          <div className="flex flex-col w-full items-center">
+          <div className="flex flex-col w-full items-center text-center">
             {loading ? (
               <Button loading={loading}>Cadastrando produto...</Button>
             ) : (
@@ -176,18 +181,21 @@ const CreateNewProductPage = () => {
               </>
             )}
             <Error className="mt-2" error={error} />
-            {dontContinue &&
-              isValidate &&
-              isValidate.message.map((message) => {
-                <Error className="mt-2" error={message} />;
-              })}
+            {isContinue && isValidate && <p></p>}
+
+            {isValidate?.message.map((message, index) => (
+              <Error key={index} className="mt-2" error={message} />
+            ))}
+            {succesRequest && (
+              <>
+                <p>Produto cadastrado com sucesso</p>
+                <Button onClick={registerNewProduct} className="w-1/2">
+                  Cadastrar um novo produto
+                </Button>
+              </>
+            )}
           </div>
         </form>
-        {succesRequest && (
-          <Button onClick={registerNewProduct} className="w-1/2">
-            Cadastrar um novo produto
-          </Button>
-        )}
       </Box>
     </Container>
   );

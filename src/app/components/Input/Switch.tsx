@@ -27,7 +27,6 @@ const Switch = ({
 }: ISwitchProps) => {
 
   const toggleValue = () => {
-    console.log(value)
     setIsPerishable(!value)
   }
 

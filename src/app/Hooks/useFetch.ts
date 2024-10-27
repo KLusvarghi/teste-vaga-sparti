@@ -12,14 +12,17 @@ const useFetch = () => {
       setError(null);
       setLoading(true);
       response = await axios(url, options);
-      console.log('resposta', response);
       if (response?.status === 404) {
+        console.log(response)
         throw new Error('Não foi possível achar um produto com este ID');
-      } else setData(response?.data);
+      } else {
+        setData(response?.data);
+      }
     } catch (err) {
       if (axios.isAxiosError(err)) {
         if (err.response?.status === 404) {
           setError('Não foi possível achar um produto com este ID');
+          console.log(response);
         } else {
           setError(`Erro: ${err.response?.status || 'Erro desconhecido'}`);
         }

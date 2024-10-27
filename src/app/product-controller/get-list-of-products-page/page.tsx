@@ -30,7 +30,6 @@ const GetListOfProduct = () => {
           element.value,
         );
         const { response } = await request(url, options);
-        console.log(response?.data);
 
         if (response?.status === 200) {
           setData(response.data);
@@ -70,13 +69,8 @@ const GetListOfProduct = () => {
           <Error error={error} />
         </form>
       </Box>
-      {succesRequest && data && (
-        <Box>
-          <div>
-            <ul></ul>
-          </div>
-        </Box>
-      )}
+      {data?.amount}
+      {succesRequest && data && <Box>{data && <div>{data.amount}</div>}</Box>}
     </Container>
   );
 };
