@@ -54,7 +54,7 @@ const dateValidate = (expirationDate: string, dateManufacture: string): IValidat
   // Validação para verificar se a data de validade é maior que a data atual
   if (expiration[0] >= currentYear) {
     if (expiration[0] === currentYear && expiration[1] >= currentMonth) {
-      if (expiration[1] === currentMonth && expiration[2] < today) {
+      if (expiration[1] === currentMonth && expiration[2] <= today) {
         return manufactureValidate('Produto se encontra vencido');
       } else {
         return manufactureValidate();

@@ -44,6 +44,8 @@ const CreateNewProductPage = () => {
   const [isContinue, setIsContinue] = useState<boolean>(false);
 
   const registerNewProduct = () => {
+    setError('');
+    setIsValidate(null);
     setSuccesRequest(false);
     name.setValue('');
     unitMeasurement.setValue('');
@@ -58,6 +60,7 @@ const CreateNewProductPage = () => {
     e.preventDefault();
     setError(null);
     setIsContinue(false);
+    const validate = dateValidate(expirationDate.value, dateManufacture.value);
 
     const formatarData = (data: string): string => {
       const newDate = data.replaceAll('-', '/');
@@ -98,7 +101,7 @@ const CreateNewProductPage = () => {
 
           const { url, options } = CREATE_NEW_PRODUCT(body);
           const { response } = await request(url, options);
-          console.log(response);
+
           if (response?.status === 200) {
             console.log('Produto cadastrado com sucesso:', response.data);
             setSuccesRequest(true);
@@ -109,11 +112,8 @@ const CreateNewProductPage = () => {
         }
       }
     }
+
     if (isPerishable) {
-      const validate = dateValidate(
-        expirationDate.value,
-        dateManufacture.value,
-      );
       setIsValidate(validate);
       if (validate.isContinue) {
         setIsContinue(true);
@@ -124,6 +124,8 @@ const CreateNewProductPage = () => {
         setError(validate.message);
       }
     } else {
+      console.log(validate.message);
+      if (validate.message) setError(validate.message[0]);
       prosseguirValidacao();
     }
   }
@@ -174,22 +176,35 @@ const CreateNewProductPage = () => {
           />
           <div className="flex flex-col w-full items-center text-center">
             {loading ? (
-              <Button loading={loading}>Cadastrando produto...</Button>
+              <Button disabled loading={loading} className="w-full">
+                Cadastrando produto...
+              </Button>
             ) : (
               <>
-                <Button className="w-1/2">Cadastrar produto</Button>
+                {!succesRequest && (
+                  <Button className="w-1/2">Cadastrar produto</Button>
+                )}
               </>
             )}
             <Error className="mt-2" error={error} />
             {isContinue && isValidate && <p></p>}
 
             {isValidate?.message.map((message, index) => (
-              <Error key={index} className="mt-2" error={message} />
+              <Error
+                key={index}
+                className="mt-2 text-red-500"
+                error={message}
+              />
             ))}
+
             {succesRequest && (
               <>
-                <p>Produto cadastrado com sucesso</p>
-                <Button onClick={registerNewProduct} className="w-1/2">
+                <p className="text-green-800">Produto cadastrado com sucesso</p>
+                <Button
+                  type="button"
+                  onClick={registerNewProduct}
+                  className="w-full"
+                >
                   Cadastrar um novo produto
                 </Button>
               </>

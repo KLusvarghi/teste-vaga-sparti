@@ -42,9 +42,10 @@ export function CREATE_NEW_PRODUCT(body: IProductProps) {
     options: {
       method: 'POST',
       headers: {
+        'accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      data: body,
     },
   };
 }

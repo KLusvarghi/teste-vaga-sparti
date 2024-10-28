@@ -11,7 +11,7 @@ const useFetch = () => {
     try {
       setError(null);
       setLoading(true);
-      response = await axios(url, options);
+      response = await axios({url, ...options});
       if (response?.status === 404) {
         console.log(response)
         throw new Error('Não foi possível achar um produto com este ID');
