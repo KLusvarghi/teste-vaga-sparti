@@ -7,10 +7,10 @@ import useForm from '@/app/Hooks/useForm';
 import { GET_PRODUCT } from '@/app/api';
 import useFetch from '@/app/Hooks/useFetch';
 import Error from '@/app/components/Error/Error';
-import Item from '@/app/components/Item/Item';
 import Container from '@/app/components/Container/Container';
 import { IProductProps } from '@/app/types/props';
 import { types } from '@/app/Hooks/useForm';
+import DisplayProduct from '@/app/components/DisplayProduct/DisplayProduct';
 
 const GetProduct = () => {
   const idProduct = useForm('id');
@@ -24,7 +24,6 @@ const GetProduct = () => {
     getStorage,
   } = useFetch();
   const [succesRequest, setSuccesRequest] = useState<boolean>(false);
-  const [productId, setProductId] = useState<string>('');
   const [data, setData] = useState<IProductProps | null>(null);
   const [hasFetched, setHasFetched] = useState<boolean>(false);
   const key = 'idProduct';
@@ -46,11 +45,9 @@ const GetProduct = () => {
               setData(response.data);
               setStorage(key, idProduct.value);
               setTimeout(() => setSuccesRequest(true), 1200);
-              setProductId(idProduct.value);
             } else {
               setSuccesRequest(false);
               setData(null);
-              setProductId('');
               removeStorage(key);
             }
           } else {
@@ -81,13 +78,12 @@ const GetProduct = () => {
           const { response } = await request(url, options);
 
           if (response?.status === 200) {
+            console.log(response.data)
             setData(response.data);
             setTimeout(() => setSuccesRequest(true), 1200);
-            setProductId(id);
           } else {
             setSuccesRequest(false);
             setData(null);
-            setProductId('');
           }
         };
         fetchStoredProduct();
@@ -122,25 +118,7 @@ const GetProduct = () => {
       {succesRequest && data && (
         <Box>
           <div>
-            <ul>
-              <Item>
-                ID do produto: <strong>{productId}</strong>
-              </Item>
-              <Item>Nome: {data.name}</Item>
-              <Item>
-                Unidade de Medida:{' '}
-                {data.unitMeasurement === 'kg'
-                  ? 'Kilogramas  (kg)'
-                  : data.unitMeasurement === 'lt'
-                  ? 'Litros  (lt)'
-                  : 'Unidade  (un)'}
-              </Item>
-              <Item>Quantia: {data.amount}</Item>
-              <Item>Preço: R${data.price}</Item>
-              <Item>Perecível: {data.perishable ? 'Sim' : 'Não'}</Item>
-              <Item>Data de fabricação: {data.expirationDate}</Item>
-              <Item>Data de validade: {data.dateManufacture}</Item>
-            </ul>
+            <DisplayProduct product={data}/>
           </div>
         </Box>
       )}

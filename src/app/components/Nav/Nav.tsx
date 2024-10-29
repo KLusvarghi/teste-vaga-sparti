@@ -26,7 +26,7 @@ export const Nav = () => {
        height={250}
        className="mx-auto"
       /> */}
-      <Image src="./logo.svg" alt="logo" height={20} width={20} />
+      <Image src="/logo.svg" alt="logo" height={20} width={20} />
       <ul className={'flex flex-col gap-2 mt-24'}>
         <li onClick={(e) => e.target}>
           <LinkLi

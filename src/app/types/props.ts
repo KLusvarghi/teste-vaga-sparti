@@ -5,26 +5,15 @@ export interface IChildrenProps {
 }
 
 export interface IProductProps {
-  amount: number;
-  dateManufacture: string;
-  expirationDate: string;
   id?: string;
-  name: string;
-  perishable: boolean;
-  price: string;
-  unitMeasurement: string;
-}
-
-export interface IProductAPIProps {
-  name: string;
-  unitMeasurement: string;
   amount: number;
-  price: string;
-  perishable: boolean;
-  expirationDate: string;
   dateManufacture: string;
+  expirationDate: string;
+  name: string;
+  perishable: boolean;
+  price: string;
+  unitMeasurement: string;
 }
-
 
 export interface IValidateProps {
   message: (string | undefined)[];

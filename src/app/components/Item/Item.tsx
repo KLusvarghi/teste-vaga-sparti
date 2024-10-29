@@ -1,10 +1,17 @@
-import { IChildrenProps } from '@/app/types/props'
-import React from 'react'
+import React from 'react';
 
-const Item = ({children}: IChildrenProps) => {
-  return (
-    <li className='list-none'>{children}</li>
-  )
+interface IItemProps {
+  children: React.ReactNode;
+  label: string;
 }
 
-export default Item
+const Item: React.FC<IItemProps> = ({ label, children }) => {
+  return (
+    <li className="list-none">
+      <span className='font-bold'>{label} </span>
+      {children}
+    </li>
+  );
+};
+
+export default Item;

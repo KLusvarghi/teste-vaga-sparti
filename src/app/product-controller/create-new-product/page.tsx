@@ -7,12 +7,13 @@ import Box from '@/app/components/Box/Box';
 import Button from '@/app/components/Button/Button';
 import Input from '@/app/components/Input/Input';
 import Error from '@/app/components/Error/Error';
-import { IIensProps } from '@/app/components/Input/Radio';
 import Switch from '@/app/components/Input/Switch';
 import Radio from '@/app/components/Input/Radio';
 import dateValidate from '@/app/utils/dateValidate';
+import { IIensProps } from '@/app/components/Input/Radio';
 import { CREATE_NEW_PRODUCT } from '@/app/api';
-import { IValidateProps } from '@/app/types/props';
+import { IProductProps, IValidateProps } from '@/app/types/props';
+import DisplayProduct from '@/app/components/DisplayProduct/DisplayProduct';
 
 export const unitMeasurementOptions: IIensProps[] = [
   {
@@ -36,14 +37,16 @@ const CreateNewProductPage = () => {
   const price = useForm('price');
   const expirationDate = useForm('date');
   const dateManufacture = useForm('date');
-
   const { loading, error, request, setError } = useFetch();
   const [succesRequest, setSuccesRequest] = useState<boolean>(false);
   const [isPerishable, setIsPerishable] = useState<boolean>(false);
   const [isValidate, setIsValidate] = useState<IValidateProps | null>(null);
   const [isContinue, setIsContinue] = useState<boolean>(false);
+  const [data, setData] = useState<IProductProps | null>(null);
+  
 
   const registerNewProduct = () => {
+    setData(null);
     setError('');
     setIsValidate(null);
     setSuccesRequest(false);
@@ -73,6 +76,8 @@ const CreateNewProductPage = () => {
         name.value == '' ||
         unitMeasurement.value == '' ||
         amount.value == '' ||
+        expirationDate.value == '' ||
+        dateManufacture.value == '' ||
         price.value == ''
       ) {
         return setError('Preencha todos os campos com valores válidos!');
@@ -97,14 +102,12 @@ const CreateNewProductPage = () => {
             dateManufacture: formatarData(dateManufacture.value),
           };
 
-          console.log(body);
-
           const { url, options } = CREATE_NEW_PRODUCT(body);
           const { response } = await request(url, options);
 
           if (response?.status === 200) {
-            console.log('Produto cadastrado com sucesso:', response.data);
-            setSuccesRequest(true);
+            setData(response.data)
+            setTimeout(() => setSuccesRequest(true), 1200);
           } else {
             setSuccesRequest(false);
             setError('Erro no cadastro, dados inválidos');
@@ -125,7 +128,7 @@ const CreateNewProductPage = () => {
       }
     } else {
       console.log(validate.message);
-      if (validate.message) setError(validate.message[0]);
+      if (validate.message) setError(validate.message);
       prosseguirValidacao();
     }
   }
@@ -212,6 +215,11 @@ const CreateNewProductPage = () => {
           </div>
         </form>
       </Box>
+      {succesRequest && data && (
+        <Box>
+          <DisplayProduct product={data} />
+        </Box>
+      )}
     </Container>
   );
 };
